@@ -1,0 +1,35 @@
+esp-idf-cools-cmd.sh
+    x add an "\n# esp-idf-tools" comment  to rcfile if none present before appending aliases and shit
+    get a list of branches to view when inputting branch name in interactive/install/i
+    check if run by root and if so, fail
+    option on download two other repos
+    interactive/install/i seems to not work properly. variable scope?
+    get update properly workan frong
+    some kinda more meaningful status indication instead of endless terminal spam?
+    think i brope interaCTIVE lol
+    do not show failure message on python returning 1
+x install.sh for curl -s github/install.sh | exec $SHELL installation
+    make it handle shit like
+        detecting existing dirs and erroring
+        working with other shells
+    verify the default mode works
+    m (seems to go noninteractive by default?) interactive by default or defaults mode
+        get interactive mode workan
+x test da shit proper in bash finafrickingly lmfao
+    x changeport/changeport.sh
+    x recheck espinfo
+    x recheck changeesp/changeesp.sh
+    x recheck changebaud/changebaud.sh
+    x recheck exit-esp-info
+README/help
+    installer command
+        curl -s https://raw.githubusercontent.com/PrincessPi3/esp-idf-tools/refs/heads/master/install.sh | exec $SHELL; exec $SHELL
+    uninstaller command
+        curl -s https://raw.githubusercontent.com/PrincessPi3/esp-idf-tools/refs/heads/master/uninstall.sh | exec $SHELL; exec $SHELL
+uninstaller
+    make uninstaller interactive by default to make sure of paths
+    check envvars for info
+    unset envvars if need be
+    option for default nuke
+check for existance of esp model before allowing on export and changesp
+tool to git pull recursive, retool, update, install as needed

@@ -1,0 +1,91 @@
+
+
+
+###############################################
+# begin esp-idf stuffss I made ################
+###############################################
+
+function getTargets() {
+    tmpFile='/tmp/targets.tmp'
+    idf.py --preview --list-targets > "$tmpFile"
+    tr '\n' ' ' < "$tmpFile"
+    rm "$tmpFile"
+}
+
+echo -e "\n=======CUSTOM=======\n"
+
+versionData=versionDataTAG
+commitHash=commitTAG
+installDate=installDateTAG
+branchData=branchDataTAG
+
+if [ -z "$ESPIDFTOOLS_INSTALLDIR" ]; then
+    echo -e "\nFAIL: ESPIDFTOOLS_INSTALLDIR environment variable not found!\nReinstall via script or manually add to ~/.bashrc\n"
+fi
+
+binDir="$ESPDIR/.custom_bin"
+
+echo -e "\nChecking for Serial Devices in dmesg\n"
+COUNTER=0
+declare -a devarr
+for line in $(dmesg | tail -50 | grep -o -E "tty[A-Z]{3}[0-9]{0,2}" | sort -u); do
+                echo -e "$COUNTER  /dev/$line"
+                devarr[$COUNTER]="/dev/$line"
+                COUNTER=$(($COUNTER+1))
+done
+
+if [ $COUNTER -gt 0 ]; then
+    echo -e "\nEnter TTY Number You'd Like:"
+    read tty
+    ttyselect="${devarr[$tty]}"
+else
+    echo -e "\nNo Serial Devices Found, Select one later with 'changeport'\n"
+fi
+
+echo -e "Set esp target:\n\tOne of: $(getTargets)"
+read esp
+
+# echo -e "\nSetting environment variables\n"
+export PATH="$ESPDIR/.custom_bin:$PATH"
+export ESPPORT="$ttyselect"
+export ESPBAUD=460800
+export ESPTARGET="$esp"
+export examples="$ESPDIR/esp-idf/examples"
+
+echo -e "Installation Variables:"
+tail -1 "$ESPDIR/version-data.log"
+echo -e "\tesp-idf-toolsversion: $versionData"
+echo -e "\tesp-idf version: $ESP_IDF_VERSION"
+echo -e "\tcommmit hash: $commitHash"
+echo -e "\tbranch: $branchData"
+
+echo -e "\tinstall date: $installDate\n"
+
+echo -e "\nEnvironment Variables:"
+echo -e "\tESPBAUD = $ESPBAUD"
+echo -e "\tESPTARGET = $ESPTARGET"
+echo -e "\tESPPORT = $ESPPORT"
+echo -e "\tESPDIR: $ESPDIR"
+echo -e "\tESPIDFTOOLS_INSTALLDIR = $ESPIDFTOOLS_INSTALLDIR"
+echo -e "\tESP_IDF_VERSION = $ESP_IDF_VERSION"
+echo -e "\tbinDir = $binDir"
+echo -e "\texamples = $examples"
+
+echo -e "\nSetting alias"
+alias changeport="source $binDir/changeport.sh"
+alias changebaud="source $binDir/changebaud.sh"
+alias changeesp="source $binDir/changeesp.sh"
+alias exit-esp-tools="source $binDir/exit-esp-tools.sh"
+
+# echo -e "Changing dir to $ESPDIR"
+# cd $ESPDIR
+
+echo -e "\nesp-idf version: $ESP_IDF_VERSION commit $commitHash from branch $branchData"
+
+echo -e "\nWelcome to esp-idf!\nAll done :3\n"
+
+###############################################
+# end esp-idf stuffss I made ##################
+###############################################
+
+

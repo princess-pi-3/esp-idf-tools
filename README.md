@@ -1,0 +1,129 @@
+# esp-idf Tools and Installer/Reinstaller
+installs/reinstalls full esp-idf with my own additions on linux.  
+pulls from master so its the very latest
+
+only currently tested on zsh and bash under debian-like, your mileage may vary depending on what features are used
+some features require user to have passwordless sudo rights  
+  
+Literally the most schizophrenically overengineered thing I have ever made. idk why I did that  
+
+Total install size (discounting needed packages) is about 9GiB  
+
+## Quick start
+`curl -s https://raw.githubusercontent.com/PrincessPi3/esp-idf-tools/refs/heads/master/install.sh | exec "$SHELL"; exec "$SHELL"`
+
+## Usage
+```
+Some take optional [branch] paramater  
+[branch] is the esp-idf branch you desire, defaults to master if not specified.
+	run-esp-cmd
+		reinstalls non-interactively with no delays, logouts, or reboots
+			`run-esp-cmd`
+
+	run-esp-cmd test
+		tests the script. very fast. minimal actions taken. no reinstall is done
+			`run-esp-cmd test [branch]`
+			`run-esp-cmd t [branch]`
+
+	run-esp-cmd retool
+	    reinstalls bins and export.sh, nothing else
+		    `run-esp-cmd retool`
+			`run-esp-cmd rt`
+
+	run-esp-cmd cron
+		runs noninteractively with forced user logout and automatic reboot, plus delays
+		    `run-esp-cmd cron [branch]`
+			`run-esp-cmd c [branch]`
+
+	run-esp-cmd update
+		updates and installs latest without reboot or user logout
+			`run-esp-cmd update [branch]`
+			`run-esp-cmd u [branch]`
+
+	run-esp-cmd interactive
+		interactively installs/reinstalls esp-idf
+		    `run-esp-cmd interactive`
+			`run-esp-cmd i`
+			`run-esp-cmd install`
+
+	run-esp-cmd nuke
+		full delete and re-download and install
+			`run-esp-cmd nuke [branch]`
+			`run-esp-cmd n [branch]`
+	
+	run-esp-cmd nukereboot
+		full delete and re-download and install, then reboot
+			`run-esp-cmd nukereboot [branch]`
+			`run-esp-cmd nr [branch]`
+
+	run-esp-cmd clearlogs
+		clear logs
+			`run-esp-cmd clearlogs`
+			`run-esp-cmd clear`
+			`run-esp-cmd cl`
+
+	run-esp-cmd help
+		display this help text
+			`run-esp-cmd help`
+			`run-esp-cmd h`
+			`run-esp-cmd -h`
+			`run-esp-cmd --help`
+			`help-esp-tools`
+
+	run-esp-cmd uninstall
+		uninstall esp-idf
+			`run-esp-cmd uninstall`
+
+Uninstall:
+	curl -s https://raw.githubusercontent.com/PrincessPi3/esp-idf-tools/refs/heads/master/uninstall.sh | exec "$SHELL"; exec "$SHELL"
+```
+
+## Features
+* `get-idf-tools` enter esp-idf
+* `help-esp-tools` show this help
+* `exit-esp-tools` exit esp-idf and reset terminal
+* `build` idf.py build  
+* `changebaud` alone prompts to enter baudrate
+	* `changebaud <baudrate>` sets baudrate manually
+		* ex. `changebaud 115200`
+* `changeesp` change esp device
+	* `changeesp` alone prompts to enter
+		* `changeesp <esp device>` manually changes to <esp device>
+		* ex. `changeesp esp32p4`
+* `changeport` change serial port
+	* `changeport` alone prompts to select
+	* `changeport <tty device path>` manually specifies path
+		* ex. `changeport /dev/ttyUSB0` changes to /dev/ttyUSB0
+* `clean` idf.py clean  
+* `fullclean` fully resets a project, 'idf.py fullclean' plus remove the build dir and delete some temp and backup files  
+* `rebuild-interactive` interactively does a `fullclean` then optionally an `erase-flash` and `setup` optionally save-defconfig optionally build or flashmonitor
+* `rebuild-auto-flashmonitor` noninteractively
+* `setup` same as running `idf.py set-target $ESPTARGET; idf.py menuconfig; idf.py build`  
+* `flash` idf.py flash  
+* `monitor` idf.py monitor  
+* `erase-flash` idf.py erase-flash  
+* `save-defconfig` idf.py save-defconfig  
+* `step-flash-monitor` attempt clean, build, flash, then monitor, dying on error  
+* `imagesize` / `size-stats` get binary size, broken down in various ways including total, by componant, and by file
+* `chipinfo` get information from the esp chip
+* `espinfo` get detailed information from the esp chip
+* `menuconfig` run `idf.py menuconfig`
+* `create-project` alone prompts for a project name
+	* `create-project <project name>` creates a project with <project name>
+		* ex. `create-project hello-world`
+* `esp-install-monitor` monitors install.log. alias for `tail -n 75 -f $ESPIDFTOOLS_INSTALLDIR/install.log`
+* `esp-install-logs` displays full text of install.log and version-data.txt
+* `patch-esp-idf <patch path>` patches esp-idf with `<patch path>` patch file
+	* ex. `patch-esp-idf ./some.patch`
+* `$examples` is a shortcut for examples directory in esp-idf
+	* ex. cd `$examples`
+
+### Sillyfilly-espdumper
+todo: integrate
+
+### Cronjob
+reinstall from master everyday at 4am, logging out users with warn delays and rebooting after
+* `crontab -e`
+add below to bottom of file:
+( just replace the path with your own)
+* `0 4 * * * bash /home/username/esp/esp-install-custom/esp-idf-tools-cmd.sh cron`
